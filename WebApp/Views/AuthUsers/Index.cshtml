@@ -1,0 +1,55 @@
+﻿@model IEnumerable<WebApp.Areas.Identity.Data.Users>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastLogin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastLogin)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegTime)
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id" onclick="return confirm('Are you sure to delete this record?')">Delete</a>
+                </td>
+                <td>
+                    <a asp-action="Block" asp-route-id="@item.Id" onclick="return confirm('Are you sure to delete this record?')">Block</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
