@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using WebApp.Areas.Identity.Data;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
@@ -22,12 +24,17 @@ namespace WebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<Users> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-
-        public LoginModel(SignInManager<Users> signInManager, ILogger<LoginModel> logger)
+        private readonly UsersDbContext _context;
+        public LoginModel(
+            SignInManager<Users> signInManager,
+            ILogger<LoginModel> logger,
+            UsersDbContext context)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
         }
+
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -61,6 +68,7 @@ namespace WebApp.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -108,34 +116,45 @@ namespace WebApp.Areas.Identity.Pages.Account
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
-                }
+                return Page();
+            }
+            
+            var result = await _signInManager.PasswordSignInAsync(
+                Input.Email,
+                Input.Password,
+                Input.RememberMe,
+                lockoutOnFailure: true);
+
+            if (result.IsLockedOut)
+            {
+                _logger.LogWarning("User account locked out.");
+                return RedirectToPage("./Lockout");
             }
 
-            // If we got this far, something failed, redisplay form
-            return Page();
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return Page();
+            }
+
+            var user = await _signInManager.UserManager.Users
+                .Where(user => user.Email == Input.Email)
+                .FirstAsync();            
+
+            if(!user.IsActive)
+            {
+                ModelState.AddModelError(string.Empty, "User is blocked");
+                return Page();
+            }
+
+            user.LastLogin = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            
+
+            _logger.LogInformation("User logged in.");
+            return LocalRedirect(returnUrl);
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿@model WebApp.Areas.Identity.Data.Users
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Unblock";
 }
-
-<h3>Are you sure you want to delete this?</h3>
 <div>
     <hr />
     <dl class="row">
@@ -27,9 +25,9 @@
         </dt>
     </dl>
 
-    <form asp-action="Delete">
+    <form asp-action="Unblock">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <input type="submit" value="Unblock" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
 </div>

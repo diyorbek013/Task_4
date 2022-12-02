@@ -16,5 +16,6 @@ public class Users : IdentityUser
     public string FirstName { get; set; } = string.Empty;
     public DateTime LastLogin { get; set; } = DateTime.Now;
     public DateTime RegTime { get; set; } = DateTime.Now;
+    public bool IsActive { get; set; } = true;
 }
 

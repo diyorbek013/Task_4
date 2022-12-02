@@ -21,7 +21,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.RegTime)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -44,10 +46,16 @@
                     @Html.DisplayFor(modelItem => item.RegTime)
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
                     <a asp-action="Delete" asp-route-id="@item.Id" onclick="return confirm('Are you sure to delete this record?')">Delete</a>
                 </td>
                 <td>
-                    <a asp-action="Block" asp-route-id="@item.Id" onclick="return confirm('Are you sure to delete this record?')">Block</a>
+                    <a asp-action="Block" asp-route-id="@item.Id" onclick="return confirm('Are you sure to block this record?')">Block</a>
+                </td>
+                <td>
+                    <a asp-action="Unblock" asp-route-id="@item.Id">Unblock</a>
                 </td>
             </tr>
         }

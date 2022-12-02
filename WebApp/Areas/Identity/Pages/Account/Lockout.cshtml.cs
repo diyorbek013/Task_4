@@ -3,7 +3,11 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using WebApp.Areas.Identity.Data;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
@@ -14,6 +18,7 @@ namespace WebApp.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class LockoutModel : PageModel
     {
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -21,5 +26,8 @@ namespace WebApp.Areas.Identity.Pages.Account
         public void OnGet()
         {
         }
+
+        
+
     }
 }
